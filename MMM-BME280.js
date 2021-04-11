@@ -5,7 +5,8 @@ Module.register("MMM-BME280", {
     titleText: "Home weather",
     deviceAddress: "0x76",
     temperatureScaleType: 0, // Celsuis
-    pressureScaleType: 0 // hPa
+    pressureScaleType: 0, // hPa
+    size: "medium" // You can use any official classes: https://forum.magicmirror.builders/topic/346/resize-custom-or-main-modules
   },
 
   // Define start sequence.
@@ -32,14 +33,9 @@ Module.register("MMM-BME280", {
   getDom: function () {
     var wrapper = document.createElement("div");
 
-    var header = document.createElement("div");
-    var label = document.createTextNode(this.config.titleText);
-    header.className = "bme-header";
-    header.appendChild(label);
-    wrapper.appendChild(header);
-
     var table = document.createElement("table");
-    var tbdy = document.createElement("tbody");
+    table.className = this.config.size;
+    var tbody = document.createElement("tbody");
     for (var i = 0; i < 3; i++) {
       var val = "";
       var sufix = "";
@@ -82,25 +78,23 @@ Module.register("MMM-BME280", {
       var tr = document.createElement("tr");
       var icon = document.createElement("i");
 
-      icon.className = "fa fa-" + icon_img + " bme-icon";
+      icon.className = `fa fa-${icon_img} bme-icon  ${this.config.size}`;
 
-      var text_div = document.createElement("div");
       var text = document.createTextNode(" " + val + sufix);
-      text_div.className = "bme-text";
-      text_div.appendChild(text);
 
       var td = document.createElement("td");
       td.className = "bme-td-icon";
       td.appendChild(icon);
       tr.appendChild(td);
 
-      var td = document.createElement("td");
-      td.appendChild(text_div);
-      tr.appendChild(td);
+      var texttd = document.createElement("td");
+      texttd.className = `bme-text ${this.config.size}`;
+      texttd.appendChild(text);
+      tr.appendChild(texttd);
 
-      tbdy.appendChild(tr);
+      tbody.appendChild(tr);
     }
-    table.appendChild(tbdy);
+    table.appendChild(tbody);
     wrapper.appendChild(table);
 
     return wrapper;

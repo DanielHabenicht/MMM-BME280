@@ -1,25 +1,9 @@
 .bme-icon {
-	color: white;
-	display: inline;
+  color: white;
+  display: inline;
+  vertical-align: middle;
 }
 
-.bme-text{
-	margin-left: 15px;
-}
-
-.bme-header {
-	border-bottom: 1px solid #666;
-}
-
-.bme-td-icon
-{
-	width: 15px;
-}
-
-.bme{
-	float: left;
-}
-
-table{
-	margin-top: 10px;
+.bme-text {
+  vertical-align: middle;
 }
