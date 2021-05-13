@@ -43,53 +43,54 @@ module.exports = NodeHelper.create({
           });
 
           // Send data to iotplotter
-
-          const data = JSON.stringify({
-            data: {
-              temperature: [
-                {
-                  value: arr[0]
-                }
-              ],
-              humidity: [
-                {
-                  value: arr[1]
-                }
-              ],
-              barometer: [
-                {
-                  value: arr[2]
-                }
-              ]
-            }
-          });
-
-          const options = {
-            hostname: "iotplotter.com",
-            port: 443,
-            path: `/api/v2/feed/${iotplotter_feed}`,
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Content-Length": data.length,
-              "api-key": iotplotter_api_key
-            }
-          };
-
-          const req = https.request(options, (res) => {
-            console.log(`statusCode: ${res.statusCode}`);
-
-            res.on("data", (d) => {
-              process.stdout.write(d);
+          if (iotplotter_feed != null && iotplotter_api_key != null) {
+            const data = JSON.stringify({
+              data: {
+                temperature: [
+                  {
+                    value: arr[0]
+                  }
+                ],
+                humidity: [
+                  {
+                    value: arr[1]
+                  }
+                ],
+                barometer: [
+                  {
+                    value: arr[2]
+                  }
+                ]
+              }
             });
-          });
 
-          req.on("error", (error) => {
-            console.error(error);
-          });
+            const options = {
+              hostname: "iotplotter.com",
+              port: 443,
+              path: `/api/v2/feed/${iotplotter_feed}`,
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Content-Length": data.length,
+                "api-key": iotplotter_api_key
+              }
+            };
 
-          req.write(data);
-          req.end();
+            const req = https.request(options, (res) => {
+              console.log(`statusCode: ${res.statusCode}`);
+
+              res.on("data", (d) => {
+                process.stdout.write(d);
+              });
+            });
+
+            req.on("error", (error) => {
+              console.error(error);
+            });
+
+            req.write(data);
+            req.end();
+          }
         }
       );
     }
