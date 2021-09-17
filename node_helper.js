@@ -27,7 +27,8 @@ module.exports = NodeHelper.create({
       var iotplotter_feed = this.config.iotplotter_feed;
       var iotplotter_api_key = this.config.iotplotter_api_key;
 
-      if (this.mqttClient !== null) {
+      if (this.mqttClient === undefined && this.config.mqtt_broker) {
+        // console.log("Init MQTT");
         this.mqttClient = mqtt.connect(
           this.config.mqtt_broker,
           this.config.mqtt_broker_options
@@ -51,16 +52,17 @@ module.exports = NodeHelper.create({
           });
 
           // Send data to MQTT Broker
-          if (this.config.mqtt_broker !== null) {
-            this.client.publish(
+          if (this.mqttClient) {
+            // console.log("Sending MQTT Messages");
+            this.mqttClient.publish(
               this.config.mqtt_topic_base + "/temperature",
               arr[0]
             );
-            this.client.publish(
+            this.mqttClient.publish(
               this.config.mqtt_topic_base + "/humidity",
               arr[1]
             );
-            this.client.publish(
+            this.mqttClient.publish(
               this.config.mqtt_topic_base + "/barometer",
               arr[2]
             );
