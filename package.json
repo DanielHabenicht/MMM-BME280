@@ -5,6 +5,7 @@
   "author": "awitwicki",
   "license": "MIT",
   "dependencies": {
-    "@fortawesome/fontawesome-free": "latest"
+    "@fortawesome/fontawesome-free": "latest",
+    "mqtt": "^4.2.8"
   }
 }

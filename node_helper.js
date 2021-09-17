@@ -10,6 +10,7 @@
 const NodeHelper = require("node_helper");
 const exec = require("child_process").exec;
 const https = require("https");
+var mqtt = require("mqtt");
 
 module.exports = NodeHelper.create({
   start: function () {
@@ -26,6 +27,13 @@ module.exports = NodeHelper.create({
       var iotplotter_feed = this.config.iotplotter_feed;
       var iotplotter_api_key = this.config.iotplotter_api_key;
 
+      if (this.mqttClient !== null) {
+        this.mqttClient = mqtt.connect(
+          this.config.mqtt_broker,
+          this.config.mqtt_broker_options
+        );
+      }
+
       // execute external DHT Script
       exec(
         `python3 ./modules/MMM-BME280/bme280.py ${deviceAddr}`,
@@ -41,6 +49,22 @@ module.exports = NodeHelper.create({
             humidity: arr[1],
             press: arr[2]
           });
+
+          // Send data to MQTT Broker
+          if (this.config.mqtt_broker !== null) {
+            this.client.publish(
+              this.config.mqtt_topic_base + "/temperature",
+              arr[0]
+            );
+            this.client.publish(
+              this.config.mqtt_topic_base + "/humidity",
+              arr[1]
+            );
+            this.client.publish(
+              this.config.mqtt_topic_base + "/barometer",
+              arr[2]
+            );
+          }
 
           // Send data to iotplotter
           if (iotplotter_feed != null && iotplotter_api_key != null) {
