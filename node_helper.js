@@ -44,6 +44,7 @@ module.exports = NodeHelper.create({
             return;
           }
           var arr = stdout.split(" ");
+          arr[2] = Number(arr[2]) + this.config.pressureOffset;
           // Send data
           self.sendSocketNotification("DATA", {
             temp: arr[0],
