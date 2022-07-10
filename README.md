@@ -24,8 +24,16 @@ modules: [
 		module: 'MMM-BME280',
 		position: 'top_left',
 		config: {
-			updateInterval: 5 //seconds
-			}
+			updateInterval: 5, //seconds - 0 for no updates
+			pressureOffset: 20, // Offset of your local pressure due to sensor inaccuracies
+			iotplotter_feed: "<id>", // Send data to iotplotter
+			iotplotter_api_key: "<token>",
+			displayOptions: {
+			    temperature: true, // display only a part of the values
+			    humidity: true,
+			    pressure: true
+			},
+		}
 	},
 	...
 ]
