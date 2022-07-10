@@ -6,7 +6,12 @@ Module.register("MMM-BME280", {
     deviceAddress: "0x76",
     temperatureScaleType: 0, // Celsuis
     pressureScaleType: 0, // hPa
-    size: "medium" // You can use any official classes: https://forum.magicmirror.builders/topic/346/resize-custom-or-main-modules
+    size: "medium", // You can use any official classes: https://forum.magicmirror.builders/topic/346/resize-custom-or-main-modules
+    displayOptions: {
+        temperature: true,
+        humidity: true,
+        pressure: true,
+    },
   },
 
   // Define start sequence.
@@ -18,7 +23,9 @@ Module.register("MMM-BME280", {
     this.pressure = "Loading...";
 
     this.update();
-    setInterval(this.update.bind(this), this.config.updateInterval * 1000);
+    if(this.config.updateInterval > 0){
+        setInterval(this.update.bind(this), this.config.updateInterval * 1000);
+    }
   },
 
   update: function () {
@@ -36,13 +43,13 @@ Module.register("MMM-BME280", {
     var table = document.createElement("table");
     table.className = this.config.size;
     var tbody = document.createElement("tbody");
-    for (var i = 0; i < 3; i++) {
+    for (let option of Object.keys(this.config.displayOptions)) {
       var val = "";
       var sufix = "";
       var icon_img = "";
 
-      switch (i) {
-        case 0:
+      switch (option) {
+        case "temperature":
           switch (this.config.temperatureScaleType) {
             case 0: // Celsius
               val = this.temperature;
@@ -55,12 +62,12 @@ Module.register("MMM-BME280", {
           }
           icon_img = "temperature-high";
           break;
-        case 1:
+        case "humidity":
           val = this.humidity;
           icon_img = "tint";
           sufix = "%";
           break;
-        case 2:
+        case "pressure":
           switch (this.config.pressureScaleType) {
             case 0: // hPa
               val = this.pressure;
@@ -75,24 +82,26 @@ Module.register("MMM-BME280", {
           break;
       }
 
-      var tr = document.createElement("tr");
-      var icon = document.createElement("i");
+      if(this.config.displayOptions[option]){
+          var tr = document.createElement("tr");
+          var icon = document.createElement("i");
+          
+          icon.className = `fa fa-${icon_img} bme-icon  ${this.config.size}`;
+          
+          var text = document.createTextNode(" " + val + sufix);
 
-      icon.className = `fa fa-${icon_img} bme-icon  ${this.config.size}`;
+          var td = document.createElement("td");
+          td.className = "bme-td-icon";
+          td.appendChild(icon);
+          tr.appendChild(td);
 
-      var text = document.createTextNode(" " + val + sufix);
-
-      var td = document.createElement("td");
-      td.className = "bme-td-icon";
-      td.appendChild(icon);
-      tr.appendChild(td);
-
-      var texttd = document.createElement("td");
-      texttd.className = `bme-text ${this.config.size}`;
-      texttd.appendChild(text);
-      tr.appendChild(texttd);
-
-      tbody.appendChild(tr);
+          var texttd = document.createElement("td");
+          texttd.className = `bme-text ${this.config.size}`;
+          texttd.appendChild(text);
+          tr.appendChild(texttd);
+          
+          tbody.appendChild(tr);
+        }
     }
     table.appendChild(tbody);
     wrapper.appendChild(table);
